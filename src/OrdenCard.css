@@ -1,0 +1,78 @@
+.card-container {
+    perspective: 1000px;
+    width: 300px;
+    margin: 10px auto;
+    cursor: pointer;
+  }
+  
+  .orden-card {
+
+    width: 100%;
+    height: 340px;
+    position: relative;
+    transform-style: preserve-3d;
+    transition: transform 0.6s ease-in-out, box-shadow 0.3s ease-in-out;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    font-family: Arial, sans-serif;
+  }
+  
+  .orden-card:hover {
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+  }
+  .botonesPasos{
+    width: 100%;
+  }
+  
+  .orden-card--flipped {
+    transform: rotateY(180deg);
+  }
+  
+  .orden-card__side {
+    position: absolute;
+    backface-visibility: hidden; /* Evita que ambas caras sean visibles al mismo tiempo */
+    width: 100%;
+    height: 100%;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
+    box-sizing: border-box;
+  }
+
+  .paso--completo {
+    color: green;
+  }
+  
+  .paso--pendiente {
+    color: red;
+    font-size: 16px;
+    font-weight: 500;
+  }
+  
+  .orden-card__front {
+    background-color: #fdfdfd;
+  }
+  
+  .orden-card__back {
+    background-color: #fdfdfd;
+    transform: rotateY(180deg); 
+  }
+  
+  .orden-card__side {
+    display: flex;
+    flex-direction: column;
+    height: 100%; 
+  }
+  
+  .volver-container {
+    align-self: flex-start; 
+  }
+  
+  .botonesPasos {
+    margin-top: auto; 
+    width: 100%;
+  }
+  
