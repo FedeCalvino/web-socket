@@ -1,27 +1,51 @@
 import React, { useState } from "react";
 import "./OrdenCard.css";
 import Button from "react-bootstrap/Button";
+import { Toaster, toast } from "react-hot-toast";
 
 export const OrdenCard = ({ orden }) => {
   const { idOrden, articulo, estado, pasos, fechacCreacion } = orden;
-
+  const [idordenSelecc, setidordenSelecc] = useState(null);
   const [isFlipped, setIsFlipped] = useState(false);
-  const [paso, setpaso] = useState(null);
+  const [pasosActualizados, setPasosActualizados] = useState(pasos);
+  const [forceRender, setForceRender] = useState(false);
 
   const handleFlip = () => {
     setIsFlipped((prev) => !prev);
   };
 
-  const Setpaso = (paso)=>{
-        setpaso(paso)
-        console.log(paso)
-  }
+  const Setpaso = async (pasoid) => {
+    console.log(pasoid);
+    const url = "http://localhost:8083/Orden/PasoOrden/Completar/" + pasoid;
+    const requestOptions = {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+    };
+    try {
+      const response = await fetch(url, requestOptions);
+      const result = await response.json();
 
+      console.log(result);
+      // Aquí se encuentra el paso a actualizar en el estado
+      const pasoIndex = pasosActualizados.findIndex((paso) => paso.idPasoOrden === pasoid);
+      if (pasoIndex !== -1) {
+        // Actualizar el paso como completado
+        const updatedPasos = [...pasosActualizados];
+        updatedPasos[pasoIndex] = {
+          ...updatedPasos[pasoIndex],
+          terminada: true,
+        };
+        setPasosActualizados(updatedPasos); // Actualizar el estado de pasos
+        setForceRender((prev) => !prev); // Forzar re-renderizado
+      }
+    } catch (error) {
+      console.error("Error actualizando el paso:", error);
+    }
+  };
 
   return (
     <div className="card-container" onClick={handleFlip}>
       <div className={`orden-card ${isFlipped ? "orden-card--flipped" : ""}`}>
-        {/* Cara frontal */}
         <div className="orden-card__side orden-card__front">
           <h2 className="orden-card__titulo">Número {articulo.IdArticulo}</h2>
           <p>
@@ -43,14 +67,14 @@ export const OrdenCard = ({ orden }) => {
           </p>
           <h3>Pasos:</h3>
           <ul className="orden-card__pasos">
-            {pasos.map((paso, index) => (
+            {pasosActualizados.map((paso, index) => (
               <li
                 key={index}
                 className={
                   paso.terminada ? "paso--completo" : "paso--pendiente"
                 }
               >
-                {paso.paso.replace("_"," ")} {paso.terminada ? "✔️" : "❌"}
+                {paso.paso.replace("_", " ")} {paso.terminada ? "✔️" : "❌"}
               </li>
             ))}
           </ul>
@@ -63,10 +87,14 @@ export const OrdenCard = ({ orden }) => {
           <div className="Ticket-container">
             <Button>Ticket</Button>
           </div>
-          {pasos.map((paso) => {
+          {pasosActualizados.map((paso) => {
             if (!paso.terminada) {
               return (
-                <Button onClick={()=>Setpaso(paso.paso)} className="botonesPasos" key={paso.id}>
+                <Button
+                  onClick={() => Setpaso(paso.idPasoOrden)}
+                  className="botonesPasos"
+                  key={paso.id}
+                >
                   {paso.paso}
                 </Button>
               );

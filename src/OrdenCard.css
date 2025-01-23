@@ -1,13 +1,13 @@
 .card-container {
     perspective: 1000px;
-    width: 300px;
+    width: 250px;
     margin: 10px auto;
     cursor: pointer;
   }
   
   .orden-card {
 
-    width: 100%;
+    width: 90%;
     height: 340px;
     position: relative;
     transform-style: preserve-3d;
@@ -38,7 +38,6 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    padding: 10px;
     box-sizing: border-box;
   }
 
@@ -73,6 +72,9 @@
   
   .botonesPasos {
     margin-top: auto; 
-    width: 100%;
+    width: 80%;
   }
   
+  p{
+    margin: 0px;
+  }

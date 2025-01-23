@@ -128,7 +128,6 @@ width: 100%;
 }
 
 .tamano:hover {
-    background-color: #007bff; /* Color de fondo al pasar el mouse */
     color: white; /* Color del texto al pasar el mouse */
     transform: scale(1.05); /* Aumenta ligeramente el tamaño */
 }
@@ -174,7 +173,6 @@ width: 100%;
   }
   
   .volver-btn:hover {
-    background-color: #0056b3;
   }
   
   .pdf-btn {
@@ -182,7 +180,6 @@ width: 100%;
   }
   
   .pdf-btn:hover {
-    background-color: #1e7e34;
   }
   
 
@@ -201,3 +198,57 @@ width: 100%;
     background-color: #fff;
   }
   
+  .button-group {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin-top: 20px;
+  }
+  
+  .btn {
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-size: 16px;
+    font-weight: bold;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+  }
+  
+  .volver-btn {
+    background-color:  #2196F3;
+    margin-right: 140px;
+    color: white;
+  }
+  .pasos-btn{
+    background-color:  #45a049;
+    color: white;
+  }
+  
+  .volver-btn:hover {
+    transform: scale(1.05);
+  }
+  
+  .pdf-btn {
+    background-color: #2196F3;
+    color: white;
+    margin-left: 140px;
+  }
+  
+  .pdf-btn:hover {
+    transform: scale(1.05);
+  }
+
+  .btn-success {
+    background-color: green;
+    color: white;
+  }
+  
+  .btn-danger {
+    background-color: red;
+    color: white;
+  }
+  
+  .btn.pasos-btn {
+    margin: 0.5rem;
+  }
