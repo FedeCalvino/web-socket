@@ -16,7 +16,7 @@ export const OrdenCard = ({ orden }) => {
 
   const Setpaso = async (pasoid) => {
     console.log(pasoid);
-    const url = "http://localhost:8083/Orden/PasoOrden/Completar/" + pasoid;
+    const url = "http://200.40.89.254:8086/Orden/PasoOrden/Completar/" + pasoid;
     const requestOptions = {
       method: "PUT",
       headers: { "Content-Type": "application/json" },

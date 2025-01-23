@@ -25,6 +25,9 @@ const styles = StyleSheet.create({
     borderBottomColor: "#cccccc",
     width: "100%",
   },
+  itemD:{
+    marginBottom:"20px"
+  },
   tableRow: {
     flexDirection: "row",
     alignItems: "center",
@@ -106,6 +109,22 @@ const styles = StyleSheet.create({
     width: "15%", // Motor con mayor prioridad
     textAlign: "center",
   },
+  itemContainer: {
+    border: "1px solid #ddd",
+    borderRadius: 5,
+    marginBottom: 10,
+    padding: 10,
+    backgroundColor: "#fff",
+    boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.1)",
+  },
+  itemText: {
+    marginBottom: 5,
+    lineHeight: 1.5,
+  },
+  itemLabel: {
+    fontWeight: "bold",
+    color: "#333",
+  }
 });
 
 
@@ -119,9 +138,11 @@ const FormatearFecha = ({ fecha }) => {
 
 const Header = ({Datos}) => (
   <>
+    { Datos.fechaInst &&
     <Text style={styles.title1}>
       Fecha Instalación: <FormatearFecha fecha={Datos.fechaInst} />
     </Text>
+    }
     <View style={styles.logoContainer}>
       <Image style={styles.logo} src="ImgLogo.png" />
     </View>
@@ -151,14 +172,23 @@ const TableHeader = () => (
 );
 
 
+const ItemDetail = ({ label, value }) => (
+  <Text style={styles.itemText}>
+    <Text style={styles.itemLabel}>{label}: </Text>
+    {value || "N/A"}
+  </Text>
+);
+
+
 const TelaTitle = ({ tela }) => <Text style={styles.title}>Tela: {tela}</Text>;
 
-export const PDFTela = ({ Venta }) => {
+export const OrdenProduccion = ({ Venta }) => {
+
   console.log("Ventas",Venta)
   //Ventas.map((Venta)=>{
 
-  const Cortinasroller = Venta.listaArticulos.filter((art) => art.tipoArticulo === "roller");
-
+  const Cortinasroller = Venta.listaArticulos.filter((art) => art.nombre === "Roller");
+  const Rieles = Venta.listaArticulos.filter((art) => art.nombre === "Riel");
 
   const groupedCortinas = Object.entries(
     Cortinasroller.reduce((groups, cortina) => {
@@ -169,6 +199,10 @@ export const PDFTela = ({ Venta }) => {
     }, {})
   );
 
+  const groupedRieles = [];
+  for (let i = 0; i < Rieles.length; i += 2) {
+    groupedRieles.push(Rieles.slice(i, i + 2));
+  }
 
   if (Cortinasroller.length > 9) {
     const pages = [];
@@ -220,6 +254,7 @@ export const PDFTela = ({ Venta }) => {
     return (
       <Document>
         {Cortinasroller.length > 0 && (
+          <>
           <Page size="A4" style={styles.page} orientation="landscape">
             {/* Header */}
             <Header Datos={Venta.Datos} />
@@ -256,7 +291,34 @@ export const PDFTela = ({ Venta }) => {
               </React.Fragment>
             ))}
           </Page>
+          </>
         )}
+        {groupedRieles.map((group, pageIndex) => (
+    <Page
+      key={pageIndex}
+      size="A4"
+      style={styles.page}
+      orientation="portrait"
+    >
+      <Header Datos={Venta.Datos} />
+      {group.map((riel, rielIndex) => (
+        <View style={styles.itemContainer} key={rielIndex}>
+          <ItemDetail label="Numero" value={riel.IdArticulo} />
+          <ItemDetail label="Ambiente" value={riel.ambiente} />
+          <ItemDetail label="Ancho" value={riel.ancho} />
+          <ItemDetail label="Tipo" value={riel.tipoRiel.tipo} />
+          <ItemDetail label="Acumula" value={riel.ladoAcumula.nombre} />
+          <ItemDetail label="Bastones" value={riel.bastones.nombre} />
+          <ItemDetail label="Cantidad de Bastones" value={riel.bastones.cantidad} />
+          <ItemDetail label="Soportes" value={riel.soportes.nombre} />
+          <ItemDetail label="Cantidad de Soportes" value={riel.soportes.cantidad} />
+          <ItemDetail label="Detalle" value={riel.detalle} />
+        </View>
+      ))}
+    </Page>
+  ))
+  }
+         
       </Document>
     );
                     }

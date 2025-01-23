@@ -1,16 +1,17 @@
-import { React, useState, useEffect, useNavigate } from 'react';
-import "./App.css"
-import {setRollerConfig} from "./Features/ConfigReducer"
-import {setTelasRollerFeature} from "./Features/TelasReducer"
-import { Ordenes } from './Ordenes';
+import { React, useState, useEffect } from 'react';
+
 import { useDispatch } from 'react-redux';
+import "./App.css"
+import {setRollerConfig,setRielConfig} from "./Features/ConfigReducer"
+import { Ordenes } from './Ordenes';
+import {setTelasRollerFeature,setTelasTradicionalFeature} from "./Features/TelasReducer"
 
-function App() {
-  const [count, setCount] = useState(0)
-  const dispatch = useDispatch()
+const App = () => {
+    
+    const dispatch = useDispatch()
 
-  const UrlTipoConfig = "http://localhost:8083/Conf"
-    const UrlTelas = "http://localhost:8083/Telas"
+    const UrlTipoConfig = "http://200.40.89.254:8086/Conf"
+    const UrlTelas = "http://200.40.89.254:8086/Telas"
 
     const fetchRollerConf = async () => {
       try {
@@ -32,16 +33,22 @@ function App() {
             return null; 
         }
     }
-
     useEffect(() => {
       const fetchData = async () => {
-        const config = await fetchRollerConf();
         const telas = await fetchTelas();
+        console.log("telas",telas)
         const TelasRoller = telas.filter(tela=>tela.tipo===1)
+        console.log("TelasRoller",TelasRoller)
+        const TelasTradi = telas.filter(tela=>tela.tipo===2)
+        console.log("TelasTradi",TelasTradi)
+
+        const config = await fetchRollerConf();
         if (config) {
           console.log("config",config)
-          dispatch(setRollerConfig(config)); 
-          console.log(TelasRoller)
+
+          dispatch(setRollerConfig(config.configuracionRoller)); 
+          dispatch(setRielConfig(config.configuracionRiel)); 
+          dispatch(setTelasTradicionalFeature(TelasTradi));
           dispatch(setTelasRollerFeature(TelasRoller))
         }
       };
