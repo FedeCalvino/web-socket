@@ -36,7 +36,7 @@ export const OrdenCard = ({ orden }) => {
           terminada: true,
         };
         setPasosActualizados(updatedPasos); // Actualizar el estado de pasos
-        setForceRender((prev) => !prev); // Forzar re-renderizado
+        //setForceRender((prev) => !prev); // Forzar re-renderizado
       }
     } catch (error) {
       console.error("Error actualizando el paso:", error);
@@ -47,7 +47,7 @@ export const OrdenCard = ({ orden }) => {
     <div className="card-container" onClick={handleFlip}>
       <div className={`orden-card ${isFlipped ? "orden-card--flipped" : ""}`}>
         <div className="orden-card__side orden-card__front">
-          <h2 className="orden-card__titulo">Número {articulo.IdArticulo}</h2>
+          <h2 className="orden-card__titulo">Número {articulo.numeroArticulo}</h2>
           <p>
             <strong>Artículo:</strong> {articulo.nombre}
           </p>
@@ -82,9 +82,7 @@ export const OrdenCard = ({ orden }) => {
         {/* Cara trasera */}
         <div className="orden-card__side orden-card__back">
           <div className="volver-container">
-            <Button>Volver</Button>
-          </div>
-          <div className="Ticket-container">
+            <Button style={{marginRight:"15px"}}>Volver</Button>
             <Button>Ticket</Button>
           </div>
           {pasosActualizados.map((paso) => {

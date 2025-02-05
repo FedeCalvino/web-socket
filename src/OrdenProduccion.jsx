@@ -28,6 +28,7 @@ const styles = StyleSheet.create({
   itemD:{
     marginBottom:"20px"
   },
+  
   tableRow: {
     flexDirection: "row",
     alignItems: "center",
@@ -124,6 +125,41 @@ const styles = StyleSheet.create({
   itemLabel: {
     fontWeight: "bold",
     color: "#333",
+  },
+  itemContainer: {
+    backgroundColor: '#f9f9f9',
+    borderRadius: 8,
+    padding: 10,
+    marginVertical: 8,
+    borderWidth: 1,
+    borderColor: '#ddd',
+  },
+  itemRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    borderBottomWidth: 1,
+    borderBottomColor: '#ddd',
+    paddingVertical: 6,
+  },
+  label: {
+    fontSize: 14,
+    color: '#555',
+  },
+  value: {
+    fontSize: 14,
+    color: '#000',
+  },
+  numeroArticulo: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#333',
+    textAlign: 'right',
+  },
+  subtitleNombre:{
+    alignItems:"center",
+    textAlign:"center",
+fontSize:30
   }
 });
 
@@ -146,9 +182,8 @@ const Header = ({Datos}) => (
     <View style={styles.logoContainer}>
       <Image style={styles.logo} src="ImgLogo.png" />
     </View>
-    <Text style={styles.title}>Detalles de la Venta</Text>
-    <Text style={styles.subtitle}>
-      Nombre del Cliente: {Datos.cliNomb}
+    <Text style={styles.subtitleNombre}>
+      {Datos.cliNomb}
     </Text>
     <Text style={styles.subtitle}>Obra: {Datos.obra || "N/A"}</Text>
   </>
@@ -221,6 +256,7 @@ export const OrdenProduccion = ({ Venta }) => {
     return (
       <Document>
         {pages.map((page, index) => (
+          <>
           <Page
             key={index}
             size="A4"
@@ -232,7 +268,7 @@ export const OrdenProduccion = ({ Venta }) => {
             <TableHeader />
             {page.cortinas.map((Roll, cortinaIndex) => (
               <View style={styles.tableRow} key={cortinaIndex}>
-                <Text style={[styles.tableCell2, styles.text]}>{Roll.IdArticulo}</Text>
+                <Text style={[styles.tableCell2, styles.text]}>{Roll.numeroArticulo}</Text>
                 <Text style={[styles.tableCell1, styles.text]}>{Roll.Ambiente}</Text>
                 <Text style={[styles.tableCell, styles.text]}>{Roll.ancho}</Text>
                 <Text style={[styles.tableCell, styles.text]}>{Roll.AnchoTela}</Text>
@@ -247,6 +283,22 @@ export const OrdenProduccion = ({ Venta }) => {
               </View>
             ))}
           </Page>
+          <View style={styles.itemContainer}>
+          <View style={styles.itemRow}>
+            <Text style={styles.label}>Número:</Text>
+            <Text style={styles.numeroArticulo}>{riel.numeroArticulo}</Text>
+          </View>
+          <ItemDetail label="Ambiente" value={riel.ambiente} />
+          <ItemDetail label="Ancho" value={riel.ancho} />
+          <ItemDetail label="Tipo" value={riel.tipoRiel.tipo} />
+          <ItemDetail label="Acumula" value={riel.ladoAcumula.nombre} />
+          <ItemDetail label="Bastones" value={riel.bastones.nombre} />
+          <ItemDetail label="Cantidad de Bastones" value={riel.bastones.cantidad} />
+          <ItemDetail label="Soportes" value={riel.soportes.nombre} />
+          <ItemDetail label="Cantidad de Soportes" value={riel.soportes.cantidad} />
+          <ItemDetail label="Detalle" value={riel.detalle} />
+        </View>
+        </>
         ))}      
       </Document>
     );
@@ -272,7 +324,7 @@ export const OrdenProduccion = ({ Venta }) => {
                     {/* Cortinas Data Rows */}
                     {cortinas.map((Roll, cortinaIndex) => (
                       <View style={styles.tableRow} key={cortinaIndex}>
-                        <Text style={[styles.tableCell2, styles.text]}>{Roll.IdArticulo}</Text>
+                        <Text style={[styles.tableCell2, styles.text]}>{Roll.numeroArticulo}</Text>
                         <Text style={[styles.tableCell1, styles.text]}>{Roll.Ambiente}</Text>
                         <Text style={[styles.tableCell, styles.text]}>{Roll.ancho}</Text>
                         <Text style={[styles.tableCell, styles.text]}>{Roll.AnchoTela}</Text>
@@ -302,18 +354,21 @@ export const OrdenProduccion = ({ Venta }) => {
     >
       <Header Datos={Venta.Datos} />
       {group.map((riel, rielIndex) => (
-        <View style={styles.itemContainer} key={rielIndex}>
-          <ItemDetail label="Numero" value={riel.IdArticulo} />
-          <ItemDetail label="Ambiente" value={riel.ambiente} />
-          <ItemDetail label="Ancho" value={riel.ancho} />
-          <ItemDetail label="Tipo" value={riel.tipoRiel.tipo} />
-          <ItemDetail label="Acumula" value={riel.ladoAcumula.nombre} />
-          <ItemDetail label="Bastones" value={riel.bastones.nombre} />
-          <ItemDetail label="Cantidad de Bastones" value={riel.bastones.cantidad} />
-          <ItemDetail label="Soportes" value={riel.soportes.nombre} />
-          <ItemDetail label="Cantidad de Soportes" value={riel.soportes.cantidad} />
-          <ItemDetail label="Detalle" value={riel.detalle} />
-        </View>
+        <View style={styles.itemContainer}>
+      <View style={styles.itemRow}>
+        <Text style={styles.label}>Número:</Text>
+        <Text style={styles.numeroArticulo}>{riel.numeroArticulo}</Text>
+      </View>
+      <ItemDetail label="Ambiente" value={riel.ambiente} />
+      <ItemDetail label="Ancho" value={riel.ancho} />
+      <ItemDetail label="Tipo" value={riel.tipoRiel.tipo} />
+      <ItemDetail label="Acumula" value={riel.ladoAcumula.nombre} />
+      <ItemDetail label="Bastones" value={riel.bastones.nombre} />
+      <ItemDetail label="Cantidad de Bastones" value={riel.bastones.cantidad} />
+      <ItemDetail label="Soportes" value={riel.soportes.nombre} />
+      <ItemDetail label="Cantidad de Soportes" value={riel.soportes.cantidad} />
+      <ItemDetail label="Detalle" value={riel.detalle} />
+    </View>
       ))}
     </Page>
   ))

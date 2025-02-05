@@ -24,6 +24,8 @@ export const Ordenes = () => {
   const [tamano, setTamano] = useState("1");
   const [lote, setLote] = useState(null);
 
+  const [PasosVenta, setPasosVenta] = useState([]);
+
   const ConfigRoller = useSelector(selectRollerConfig);
   const CanosRoller = ConfigRoller.canos;
   const LadosCadenas = ConfigRoller.ladosCadena;
@@ -59,8 +61,15 @@ export const Ordenes = () => {
       .tipoCadena;
   };
   const TiposTelas = useSelector(selectTelasRoller);
-
-  const fechaRef = useRef(null);  // Usamos useRef para la fecha
+  
+  const [fecha, setFecha] = useState(new Date().toISOString().split("T")[0]); // Fecha actual por defecto
+  const fechaRef = useRef(null);
+  
+  useEffect(() => {
+    if (fechaRef.current) {
+      fechaRef.current.value = fecha; // Asigna la fecha inicial al input
+    }
+  }, [fecha]);
 
   const fetchData = async () => {
     try {
@@ -69,12 +78,14 @@ export const Ordenes = () => {
       console.log("Se hace el fetch");
 
       // Verifica si la referencia existe antes de acceder a su valor
-      const fechaInput = fechaRef.current ? fechaRef.current.value : null;
+      console.log("fechaRef",fechaRef)
+      console.log("fechaRef.current.value",fechaRef.current?.value)
+      const fechaInput = fechaRef.current ? fechaRef.current?.value : null;
       console.log("fechaInput",fechaInput)
       const fecha = fechaInput || new Date().toISOString().split("T")[0];
       console.log("Fecha actual:", fecha);
-
-      const url = `http://200.40.89.254:8086/Lote/Fecha/${fecha}`;
+      setFecha(fecha)
+      const url = `http://localhost:8083/Lote/Fecha/${fecha}`;
       console.log("URL", url);
       const response = await fetch(url);
       const data = await response.json();
@@ -175,12 +186,11 @@ export const Ordenes = () => {
     );
   };
 
-
-  const setTelasCortada = (ven) => {
+  const setPasoHecho = (ven,Paso) => {
     console.log("Seteo telas cortadas");
     ven.ordenes.forEach((orden) => {
       orden.pasos.forEach((paso) => {
-        if (paso.paso === "CORTE_TELA") {
+        if (paso.paso === Paso) {
           Setpaso(paso.idPasoOrden);
         }
       });
@@ -188,6 +198,7 @@ export const Ordenes = () => {
     fetchData();
     setLote(null);
   };
+
 
   const LoteCompleto = (lote) => {
 
@@ -209,36 +220,33 @@ export const Ordenes = () => {
     );
   };
 
-  const setArmada = (ven) => {
-    console.log("Seteo telas cortadas");
-    ven.ordenes.forEach((orden) => {
-      orden.pasos.forEach((paso) => {
-        if (paso.paso === "ARMADO") {
-          Setpaso(paso.idPasoOrden);
-        }
-      });
-    });
-    fetchData();
-    setLote(null);
-  };
-
-  const setCanosCortada = (ven) => {
-    console.log("Seteo caños cortados");
-    ven.ordenes.forEach((orden) => {
-      orden.pasos.forEach((paso) => {
-        if (paso.paso === "CORTE_CANO") {
-          Setpaso(paso.idPasoOrden);
-        }
-      });
-    });
-    fetchData();
-    setLote(null);
-  };
-
   useEffect(() => {
     fetchData();
     connect();
   }, []);
+
+  const fetchPasosLote=()=>{
+    let pasos = []
+    if(lote){
+    lote.ventas?.map((ven)=>{
+        ven.ordenes.map((ord)=>{
+          ord.pasos.map((paso)=>{
+          console.log(paso)
+          let pasoOrden = paso.paso
+          if(!pasos.find((pasoOrd)=>pasoOrd===pasoOrden)){
+            pasos.push(pasoOrden) 
+          }
+        })
+      })
+    })
+    setPasosVenta(pasos)
+  }
+  }
+
+  useEffect(() => {
+    fetchPasosLote();
+  }, [lote]);
+
 
   useEffect(() => {
     // Vuelve a ejecutar el fetch si la fecha cambia
@@ -257,35 +265,23 @@ export const Ordenes = () => {
                 <Button onClick={() => setLote(null)} className="btn volver-btn">
                   Volver
                 </Button>
-                <Button
-              onClick={() => setTelasCortada(ven)}
-              className={`btn pasos-btn ${
-                PasoTerminado(ven, "CORTE_TELA") ? "btn-success" : "btn-danger"
-              }`}
-              disabled={PasoTerminado(ven, "CORTE_TELA")}
-            >
-              TELAS CORTADAS
-            </Button>
-            <Button
-              onClick={() => setCanosCortada(ven)}
-              className={`btn pasos-btn ${
-                PasoTerminado(ven, "CORTE_CANO") ? "btn-success" : "btn-danger"
-              }`}
-              disabled={PasoTerminado(ven, "CORTE_CANO")}
-            >
-              CAÑOS CORTADOS
-            </Button>
-            <Button
-              onClick={() => setArmada(ven)}
-              className={`btn pasos-btn ${
-                PasoTerminado(ven, "ARMADO") ? "btn-success" : "btn-danger"
-              }`}
-              disabled={PasoTerminado(ven, "ARMADO")}
-            >
-              ARMADO
-            </Button>
+                {PasosVenta.map((paso) => {
+                  return (
+                    <Button
+                      key={paso} // Ensure you have a unique key for each mapped item
+                      onClick={() => setPasoHecho(ven,paso)} // Set the correct 'ven' item here
+                      className={`btn pasos-btn ${
+                        PasoTerminado(ven, paso) ? "btn-success" : "btn-danger"
+                      }`}
+                      disabled={PasoTerminado(ven, paso)}
+                    >
+                      {paso}
+                    </Button>
+                  );
+                })}
+
                 <Button onClick={() => DescPdf(lote)} className="btn pdf-btn">
-                  PDF
+                  ORDEN
                 </Button>
               </div>
               <div className="ordenes-container">

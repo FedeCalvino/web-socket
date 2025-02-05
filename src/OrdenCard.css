@@ -67,7 +67,9 @@
   }
   
   .volver-container {
-    align-self: flex-start; 
+    display: flex;
+    justify-content: space-between; 
+
   }
   
   .botonesPasos {
